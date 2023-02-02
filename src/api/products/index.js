@@ -25,15 +25,15 @@ productRouter.get("/", async (req, res, next) => {
     if (req.query.category)
       query.category = { [Op.iLike]: `%${req.query.category}%` };
     const foundProducts = await ProductModel.findAll({
-      where: { ...query },
       include: [
+        { model: ReviewModel, attributes: ["comment", "rate"] },
         {
           model: CategoryModel,
           attributes: ["name"],
           through: { attributes: [] },
         },
-        { model: ReviewModel, attributes: ["comment", "rate"] },
       ],
+      where: { ...query },
       //  attributes: { exclude: ["createdAt", "updatedAt"] },
     });
     res.status(200).send(foundProducts);

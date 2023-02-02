@@ -9,7 +9,6 @@ const categoryRouter = express.Router();
 
 categoryRouter.post("/", async (req, res, next) => {
   try {
-    console.log(req.headers.origin, "POST category at:", new Date());
     const { id } = await CategoryModel.create(req.body);
     res.status(201).send({ message: `Added a new category.`, id });
   } catch (error) {
@@ -25,7 +24,6 @@ categoryRouter.post("/", async (req, res, next) => {
 
 categoryRouter.get("/", async (req, res, next) => {
   try {
-    console.log(req.headers.origin, "GET all categories at:", new Date());
     const query = {};
     if (req.query.category)
       query.category = { [Op.iLike]: `%${req.query.category}%` };
@@ -42,9 +40,8 @@ categoryRouter.get("/", async (req, res, next) => {
 
 categoryRouter.get("/:categoryId", async (req, res, next) => {
   try {
-    console.log(req.headers.origin, "GET specific category at:", new Date());
     const foundCategory = await CategoryModel.findByPk(req.params.categoryId, {
-      attributes: req.query.attributes ? req.query.attributes.split(",") : {},
+      attributes: { exclude: ["createdAt", "updatedAt"] },
     });
     if (foundCategory) {
       res.status(200).send(foundCategory);
@@ -72,9 +69,8 @@ categoryRouter.post("/bulk", async (req, res, next) => {
   }
 });
 
-categoryRouter.put("/edit/:categoryId", async (req, res, next) => {
+categoryRouter.put("/:categoryId", async (req, res, next) => {
   try {
-    console.log(req.headers.origin, "PUT category at:", new Date());
     const [numUpdated, updatedCategory] = await CategoryModel.update(req.body, {
       where: { id: req.params.categoryId },
       returning: true,
@@ -89,9 +85,8 @@ categoryRouter.put("/edit/:categoryId", async (req, res, next) => {
   }
 });
 
-categoryRouter.delete("/delete/:categoryId", async (req, res, next) => {
+categoryRouter.delete("/:categoryId", async (req, res, next) => {
   try {
-    console.log(req.headers.origin, "DELETE category at:", new Date());
     const deleted = await CategoryModel.destroy({
       where: { id: req.params.categoryId },
     });

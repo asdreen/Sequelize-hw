@@ -15,10 +15,10 @@ const ProductModel = sequelize.define("product", {
     allowNull: true,
     unique: true,
   },
-  category: {
+  /*category: {
     type: DataTypes.STRING,
     allowNull: false,
-  },
+  },*/
   description: {
     type: DataTypes.TEXT,
     allowNull: false,
@@ -35,7 +35,7 @@ const ProductModel = sequelize.define("product", {
 });
 
 ProductModel.hasMany(ReviewModel, {
-  foreignKey: "productId",
+  foreignKey: { name: "productId" },
 });
 ReviewModel.belongsTo(ProductModel);
 
