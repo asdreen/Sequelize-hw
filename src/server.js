@@ -3,6 +3,8 @@ import listEndpoints from "express-list-endpoints";
 import cors from "cors";
 import { pgConnect, syncModels } from "./db.js";
 import productRouter from "../src/api/products/index.js";
+import userRouter from "../src/api/users/index.js";
+import categoryRouter from "../src/api/categories/index.js";
 import {
   badRequestErrorHandler,
   forbiddenErrorHandler,
@@ -20,6 +22,8 @@ server.use(express.json());
 
 // ********************************** ENDPOINTS ****************************************
 server.use("/products", productRouter);
+server.use("/categories", categoryRouter);
+server.use("/users", userRouter);
 
 // ******************************* ERROR HANDLERS **************************************
 server.use(badRequestErrorHandler);
