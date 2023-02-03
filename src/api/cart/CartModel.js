@@ -1,16 +1,13 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../../db.js";
 
-const CategoryModel = sequelize.define("category", {
-  categoryId: {
+const CartModel = sequelize.define("cart", {
+  id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
-  },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    unique: true,
   },
 });
 
-export default CategoryModel;
+export default CartModel;

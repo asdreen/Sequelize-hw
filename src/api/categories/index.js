@@ -85,7 +85,7 @@ categoryRouter.put("/:categoryId", async (req, res, next) => {
   }
 });
 
-categoryRouter.delete("/:categoryId", async (req, res, next) => {
+categoryRouter.delete("/delete/:categoryId", async (req, res, next) => {
   try {
     const deleted = await CategoryModel.destroy({
       where: { id: req.params.categoryId },

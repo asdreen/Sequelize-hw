@@ -5,6 +5,7 @@ import CategoryModel from "../categories/CategoryModel.js";
 import ProductModel from "./model.js";
 import ReviewModel from "./ReviewModel.js";
 import UserModel from "../users/UserModel.js";
+import ProductsCartModel from "../junctions/ProductsCartModel.js";
 
 const productRouter = express.Router();
 
@@ -103,6 +104,52 @@ productRouter.delete("/:productId", async (req, res, next) => {
         )
       );
     }
+  } catch (error) {
+    next(error);
+  }
+});
+
+productRouter.post("/:productId/:userId/cart", async (req, res, next) => {
+  try {
+    const activeCart = await CartModel.findAll({
+      where: {
+        [Op.and]: [{ userId: req.params.userId }, { status: "active" }],
+      },
+    });
+    if (activeCart.length === 0) {
+      await CartModel.create({ userId: req.params.userId, status: "active" });
+    }
+    console.log("CART!!!!!", activeCart);
+    const productIsThere = await ProductsCartModel.findAll({
+      where: {
+        [Op.and]: [
+          { productId: req.params.productId },
+          { cartId: activeCart[0].dataValues.id },
+        ],
+      },
+    });
+
+    if (productIsThere.length === 0) {
+      await ProductsCartModel.create({
+        ...req.body,
+        cartId: activeCart[0].dataValues.id,
+        productId: req.params.productId,
+      });
+    } else {
+      await ProductsCartModel.update(
+        { quantity: req.body.quantity + productIsThere[0].dataValues.quantity },
+        {
+          where: {
+            [Op.and]: [
+              { productId: req.params.productId },
+              { cartId: activeCart[0].dataValues.id },
+            ],
+          },
+          returning: true,
+        }
+      );
+    }
+    res.status(201).send();
   } catch (error) {
     next(error);
   }
